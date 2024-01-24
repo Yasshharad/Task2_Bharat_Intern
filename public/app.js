@@ -1,4 +1,3 @@
-// public/app.js
 document.addEventListener('DOMContentLoaded', () => {
     const transactionForm = document.getElementById('transaction-form');
     const transactionsTable = document.getElementById('transactions-table');
@@ -7,14 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const endDateFilter = document.getElementById('end-date-filter');
     const balanceAmount = document.getElementById('balance-amount');
 
-    // Function to fetch and display transactions
     async function fetchTransactions() {
         try {
             const url = `http://localhost:4000/transactions?type=${typeFilter.value}&startDate=${startDateFilter.value}&endDate=${endDateFilter.value}`;
             const response = await fetch(url);
             const transactions = await response.json();
 
-            // Clear existing table rows
             transactionsTable.innerHTML = '';
             transactionsTable.innerHTML = `
                 <thead>
@@ -46,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 transactionsTable.querySelector('tbody').appendChild(tr);
 
-                // Update totalIncome and totalExpense
                 if (transaction.type === 'income') {
                     totalIncome += transaction.amount;
                 } else {
@@ -54,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Calculate balance
             const balance = totalIncome - totalExpense;
             balanceAmount.textContent = balance.toFixed(2);
         } catch (error) {
@@ -62,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Handle form submission
     transactionForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -85,13 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    // Clear form fields and transaction ID
                     document.getElementById('transaction-id').value = '';
                     document.getElementById('description').value = '';
                     document.getElementById('amount').value = '';
                     document.getElementById('type').value = 'expense';
 
-                    // Fetch and display updated transactions
                     fetchTransactions();
                 } else {
                     const errorMessage = await response.json();
@@ -103,16 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add event listeners for filters
     typeFilter.addEventListener('change', () => fetchTransactions());
     startDateFilter.addEventListener('change', () => fetchTransactions());
     endDateFilter.addEventListener('change', () => fetchTransactions());
 
-    // Initial fetch of transactions
     fetchTransactions();
 });
 
-// Function to edit a transaction
+
 function editTransaction(id, description, amount, type) {
     document.getElementById('transaction-id').value = id;
     document.getElementById('description').value = description;
@@ -120,7 +110,6 @@ function editTransaction(id, description, amount, type) {
     document.getElementById('type').value = type;
 }
 
-// Function to delete a transaction
 async function deleteTransaction(id) {
     const confirmation = confirm('Are you sure you want to delete this transaction?');
 
@@ -130,7 +119,6 @@ async function deleteTransaction(id) {
             const response = await fetch(url, { method: 'DELETE' });
 
             if (response.ok) {
-                // Fetch and display updated transactions
                 fetchTransactions();
             } else {
                 const errorMessage = await response.json();

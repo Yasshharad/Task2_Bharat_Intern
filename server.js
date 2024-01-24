@@ -1,4 +1,3 @@
-// server/server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -8,7 +7,6 @@ const app = express();
 const PORT = 4000;
 require('dotenv').config();
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection.on('connected', () => {
@@ -19,7 +17,6 @@ mongoose.connection.on('error', (err) => {
     console.error('Error connecting to MongoDB Atlas:', err);
 });
 
-// Define Transaction schema (combining income and expense)
 const transactionSchema = new mongoose.Schema({
     description: String,
     amount: Number,
@@ -29,13 +26,9 @@ const transactionSchema = new mongoose.Schema({
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
-// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
-// Routes
-
-// Get transactions with optional filters
 app.get('/transactions', async (req, res) => {
     try {
         const { type, startDate, endDate } = req.query;
@@ -56,7 +49,6 @@ app.get('/transactions', async (req, res) => {
     }
 });
 
-// Add or update a transaction
 app.post('/transactions', async (req, res) => {
     const { id, description, amount, type } = req.body;
 
@@ -64,10 +56,8 @@ app.post('/transactions', async (req, res) => {
         let transaction;
 
         if (id) {
-            // Update existing transaction
             transaction = await Transaction.findByIdAndUpdate(id, { description, amount, type }, { new: true });
         } else {
-            // Add new transaction
             transaction = new Transaction({ description, amount, type });
             await transaction.save();
         }
@@ -78,7 +68,6 @@ app.post('/transactions', async (req, res) => {
     }
 });
 
-// Delete a transaction
 app.delete('/transactions/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -95,7 +84,6 @@ app.delete('/transactions/:id', async (req, res) => {
     }
 });
 
-// Update a transaction
 app.put('/transactions/:id', async (req, res) => {
     const { id } = req.params;
     const { description, amount, type } = req.body;
@@ -113,7 +101,6 @@ app.put('/transactions/:id', async (req, res) => {
     }
 });
 
-// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
